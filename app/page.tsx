@@ -1,5 +1,10 @@
-import Image from "next/image";
+"use client"
+
 import Link from "next/link";
+import { AnimatedBeam } from "@/components/magicui/animated-beam";
+import { ShimmerButton } from "@/components/magicui/shimmer-button";
+import { Meteors } from "@/components/magicui/meteors";
+import { useRef } from "react";
 
 export default function Home() {
   return (
@@ -7,6 +12,7 @@ export default function Home() {
       {/* Hero Section */}
       <section className="relative py-20 md:py-32 overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-r from-[#1a3c70]/90 to-[#1a3c70]/80 z-0"></div>
+        <Meteors number={20} />
         <div className="container mx-auto px-4 relative z-10">
           <div className="flex flex-col items-center text-center max-w-4xl mx-auto">
             <h1 className="text-4xl md:text-6xl font-bold text-white mb-6 leading-tight">
@@ -16,8 +22,10 @@ export default function Home() {
               The complete procurement management platform built for the Albanian-American Development Foundation.
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
-              <Link href="/signin" className="px-8 py-3 bg-[#d42e4e] text-white font-medium rounded-lg hover:bg-[#d42e4e]/90 transition-colors">
-                Request Access
+              <Link href="/signin">
+                <ShimmerButton className="px-8 py-3 bg-[#d42e4e] text-white font-medium rounded-lg hover:bg-[#d42e4e]/90 transition-colors">
+                  Request Access
+                </ShimmerButton>
               </Link>
             </div>
           </div>
@@ -37,7 +45,7 @@ export default function Home() {
           </div>
           
           <div className="grid md:grid-cols-2 gap-10 max-w-5xl mx-auto">
-            <div className="bg-gray-50 p-8 rounded-xl">
+            <div className="bg-gray-50 p-8 rounded-xl hover:shadow-lg transition-all duration-300">
               <h3 className="text-xl font-semibold text-[#1a3c70] mb-3">The Problem</h3>
               <ul className="space-y-3">
                 <li className="flex items-start">
@@ -58,7 +66,7 @@ export default function Home() {
                 </li>
               </ul>
             </div>
-            <div className="bg-gray-50 p-8 rounded-xl">
+            <div className="bg-gray-50 p-8 rounded-xl hover:shadow-lg transition-all duration-300">
               <h3 className="text-xl font-semibold text-[#1a3c70] mb-3">Our Solution</h3>
               <ul className="space-y-3">
                 <li className="flex items-start">
@@ -97,7 +105,7 @@ export default function Home() {
           
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto">
             {/* Feature 1 */}
-            <div className="bg-white p-6 rounded-xl shadow-sm hover:shadow-md transition-shadow">
+            <div className="bg-white p-6 rounded-xl shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-1">
               <div className="w-12 h-12 bg-[#1a3c70]/10 rounded-full flex items-center justify-center mb-4">
                 <svg className="w-6 h-6 text-[#1a3c70]" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
@@ -108,7 +116,7 @@ export default function Home() {
             </div>
             
             {/* Feature 2 */}
-            <div className="bg-white p-6 rounded-xl shadow-sm hover:shadow-md transition-shadow">
+            <div className="bg-white p-6 rounded-xl shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-1">
               <div className="w-12 h-12 bg-[#1a3c70]/10 rounded-full flex items-center justify-center mb-4">
                 <svg className="w-6 h-6 text-[#1a3c70]" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
@@ -119,7 +127,7 @@ export default function Home() {
             </div>
             
             {/* Feature 3 */}
-            <div className="bg-white p-6 rounded-xl shadow-sm hover:shadow-md transition-shadow">
+            <div className="bg-white p-6 rounded-xl shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-1">
               <div className="w-12 h-12 bg-[#1a3c70]/10 rounded-full flex items-center justify-center mb-4">
                 <svg className="w-6 h-6 text-[#1a3c70]" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
@@ -130,7 +138,7 @@ export default function Home() {
             </div>
             
             {/* Feature 4 */}
-            <div className="bg-white p-6 rounded-xl shadow-sm hover:shadow-md transition-shadow">
+            <div className="bg-white p-6 rounded-xl shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-1">
               <div className="w-12 h-12 bg-[#1a3c70]/10 rounded-full flex items-center justify-center mb-4">
                 <svg className="w-6 h-6 text-[#1a3c70]" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
@@ -155,33 +163,30 @@ export default function Home() {
             </p>
           </div>
           
-          <div className="flex flex-col md:flex-row max-w-5xl mx-auto">
+          <div className="relative flex flex-col md:flex-row max-w-5xl mx-auto">
             {/* Step 1 */}
-            <div className="flex-1 text-center px-6 mb-8 md:mb-0 relative">
+            <div className="flex-1 text-center px-6 mb-8 md:mb-0 relative" id="step1">
               <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-[#1a3c70] text-white text-2xl font-bold mb-4">1</div>
               <h3 className="text-xl font-semibold text-[#1a3c70] mb-3">Upload Tender</h3>
               <p className="text-gray-600">Create and publish your tender with our standardized templates</p>
-              
-              {/* Connector (only visible on desktop) */}
-              <div className="hidden md:block absolute top-8 left-full w-full h-1 bg-[#1a3c70] transform -translate-x-1/2"></div>
             </div>
             
             {/* Step 2 */}
-            <div className="flex-1 text-center px-6 mb-8 md:mb-0 relative">
+            <div className="flex-1 text-center px-6 mb-8 md:mb-0 relative" id="step2">
               <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-[#1a3c70] text-white text-2xl font-bold mb-4">2</div>
               <h3 className="text-xl font-semibold text-[#1a3c70] mb-3">Evaluate</h3>
               <p className="text-gray-600">Collect and assess vendor submissions with AI assistance</p>
-              
-              {/* Connector (only visible on desktop) */}
-              <div className="hidden md:block absolute top-8 left-full w-full h-1 bg-[#1a3c70] transform -translate-x-1/2"></div>
             </div>
             
             {/* Step 3 */}
-            <div className="flex-1 text-center px-6">
+            <div className="flex-1 text-center px-6" id="step3">
               <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-[#1a3c70] text-white text-2xl font-bold mb-4">3</div>
               <h3 className="text-xl font-semibold text-[#1a3c70] mb-3">Finalize</h3>
               <p className="text-gray-600">Award contracts and generate comprehensive reports</p>
             </div>
+            
+            {/* Animated Beams - Client-side only */}
+            <ClientBeams />
           </div>
         </div>
       </section>
@@ -198,7 +203,7 @@ export default function Home() {
             </p>
           </div>
           
-          <div className="bg-white shadow-sm rounded-xl p-8 max-w-3xl mx-auto">
+          <div className="bg-white shadow-sm rounded-xl p-8 max-w-3xl mx-auto hover:shadow-lg transition-all duration-300">
             <div className="italic text-gray-700 mb-4">
               "The procurement platform has transformed our tender process, saving us countless hours of manual work while improving transparency and compliance."
             </div>
@@ -224,11 +229,15 @@ export default function Home() {
               Join the Albanian-American Development Foundation and other organizations in modernizing procurement.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link href="/signin" className="px-8 py-3 bg-[#d42e4e] text-white font-medium rounded-lg hover:bg-[#d42e4e]/90 transition-colors">
-                Start Now
+              <Link href="/signin">
+                <ShimmerButton className="px-8 py-3 bg-[#d42e4e] text-white font-medium rounded-lg hover:bg-[#d42e4e]/90 transition-colors">
+                  Start Now
+                </ShimmerButton>
               </Link>
-              <Link href="/contact" className="px-8 py-3 bg-white text-[#1a3c70] font-medium rounded-lg hover:bg-white/90 transition-colors">
-                Contact Us
+              <Link href="/contact">
+                <ShimmerButton className="px-8 py-3 bg-white text-[#1a3c70] font-medium rounded-lg hover:bg-white/90 transition-colors">
+                  Contact Us
+                </ShimmerButton>
               </Link>
             </div>
           </div>
@@ -252,5 +261,44 @@ export default function Home() {
         </div>
       </footer>
     </main>
+  );
+}
+
+function ClientBeams() {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const step1Ref = useRef<HTMLDivElement>(null);
+  const step2Ref = useRef<HTMLDivElement>(null);
+  const step3Ref = useRef<HTMLDivElement>(null);
+  
+  return (
+    <div ref={containerRef} className="absolute inset-0 pointer-events-none">
+      {containerRef.current && step1Ref.current && step2Ref.current && (
+        <AnimatedBeam
+          containerRef={containerRef}
+          fromRef={step1Ref}
+          toRef={step2Ref}
+          curvature={-20}
+          duration={3}
+          gradientStopColor="#d42e4e"
+          gradientStartColor="#1a3c70"
+        />
+      )}
+      {containerRef.current && step2Ref.current && step3Ref.current && (
+        <AnimatedBeam
+          containerRef={containerRef}
+          fromRef={step2Ref}
+          toRef={step3Ref}
+          curvature={-20}
+          duration={3}
+          gradientStopColor="#d42e4e"
+          gradientStartColor="#1a3c70"
+        />
+      )}
+      
+      {/* References to steps */}
+      <div ref={step1Ref} className="absolute top-4 left-[16.6%]" />
+      <div ref={step2Ref} className="absolute top-4 left-[50%]" />
+      <div ref={step3Ref} className="absolute top-4 left-[83.3%]" />
+    </div>
   );
 }
