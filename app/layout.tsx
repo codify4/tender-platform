@@ -8,8 +8,8 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Tender Platform",
-  description: "Tender Platform to streamline the process of procurement and tender management.",
+  title: "eProcure",
+  description: "Streamlining the procurement process with AI-powered tools for efficiency and compliance."
 };
 
 export default function RootLayout({

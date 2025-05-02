@@ -1,3 +1,5 @@
+"use client"
+
 import { motion } from "framer-motion"
 import {
   ArrowRight,
@@ -15,6 +17,7 @@ import {
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import Link from "next/link"
+import Image from "next/image"
 
 export default function Home() {
   return (
@@ -24,7 +27,8 @@ export default function Home() {
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center">
-              <span className="text-[#1a3c70] font-bold text-xl">AADF Procurement</span>
+              <Image src="/logo.png" alt="eProcure Logo" width={70} height={70} />
+              <span className="text-[#1a3c70] font-bold text-xl">eProcure</span>
             </div>
             <nav className="hidden md:flex space-x-8">
               <a href="#features" className="text-gray-700 hover:text-[#1a3c70] transition-colors">
@@ -63,14 +67,15 @@ export default function Home() {
               </p>
               <div className="flex flex-col sm:flex-row gap-4">
                 <Button size="lg" className="bg-[#d42e4e] hover:bg-[#b82642] text-white">
-                  Request Demo <ArrowRight className="ml-2 h-4 w-4" />
+                  Get Started as Vendor
+                  <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>
                 <Button
                   size="lg"
                   variant="outline"
                   className="bg-transparent border-white text-white hover:bg-white/10"
                 >
-                  Learn More
+                  Get Started as Staff
                 </Button>
               </div>
             </motion.div>
@@ -406,6 +411,7 @@ export default function Home() {
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div>
+              <Image src="/logo.png" alt="eProcure Logo" width={70} height={70} />
               <h3 className="text-xl font-bold mb-4">eProcure</h3>
               <p className="text-blue-200 mb-4">
                 Streamlining the procurement process with AI-powered tools for efficiency and compliance.
