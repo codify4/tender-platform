@@ -43,19 +43,20 @@ export async function saveVendorProfile(formData: FormData) {
   }
   
   const companyName = formData.get('companyName') as string
-  const registrationNumber = formData.get('registrationNumber') as string
-  const address = formData.get('address') as string
-  const phoneNumber = formData.get('phoneNumber') as string
+  const phoneNo = formData.get('phoneNo') as string
+  const activityCountry = formData.get('activityCountry') as string
+  const residenceCity = formData.get('residenceCity') as string
+  const description = formData.get('description') as string
   
   const { error } = await supabase
-    .from('vendor_profiles')
+    .from('vendors')
     .upsert({
       id: user.id,
       company_name: companyName,
-      registration_number: registrationNumber,
-      address,
-      phone_number: phoneNumber,
-      updated_at: new Date().toISOString(),
+      phone_no: phoneNo,
+      activity_country: activityCountry,
+      residence_city: residenceCity,
+      description: description,
     })
   
   if (error) {
@@ -76,7 +77,7 @@ export async function getVendorProfile() {
   }
   
   const { data, error } = await supabase
-    .from('vendor_profiles')
+    .from('vendors')
     .select('*')
     .eq('id', user.id)
     .single()

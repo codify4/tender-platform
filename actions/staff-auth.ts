@@ -42,12 +42,12 @@ export async function setStaffRole(role: 'procurement_officer' | 'committee_offi
     return redirect('/signin?message=Not authenticated')
   }
   
+  // Simple direct upsert
   const { error } = await supabase
-    .from('staff_roles')
+    .from('staff')
     .upsert({
       id: user.id,
       role,
-      updated_at: new Date().toISOString(),
     })
   
   if (error) {
@@ -72,7 +72,7 @@ export async function getStaffRole() {
   }
   
   const { data, error } = await supabase
-    .from('staff_roles')
+    .from('staff')
     .select('role')
     .eq('id', user.id)
     .single()
@@ -95,7 +95,7 @@ export async function checkStaffRoleExists() {
   }
   
   const { data, error } = await supabase
-    .from('staff_roles')
+    .from('staff')
     .select('role')
     .eq('id', user.id)
     .single()

@@ -5,7 +5,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Button } from '@/components/ui/button'
 import { saveVendorProfile, getVendorProfile } from '@/actions/vendor-auth'
-import { use } from 'react'
+import { Textarea } from '@/components/ui/textarea'
 
 export default async function VendorProfilePage({
   searchParams,
@@ -50,32 +50,43 @@ export default async function VendorProfilePage({
             </div>
             
             <div className="space-y-2">
-              <Label htmlFor="registrationNumber">Registration Number</Label>
+              <Label htmlFor="phoneNo">Phone Number</Label>
               <Input 
-                id="registrationNumber" 
-                name="registrationNumber" 
-                placeholder="Enter registration number" 
-                defaultValue={profile?.registration_number || ''}
-              />
-            </div>
-            
-            <div className="space-y-2">
-              <Label htmlFor="address">Address</Label>
-              <Input 
-                id="address" 
-                name="address" 
-                placeholder="Enter company address" 
-                defaultValue={profile?.address || ''}
-              />
-            </div>
-            
-            <div className="space-y-2">
-              <Label htmlFor="phoneNumber">Phone Number</Label>
-              <Input 
-                id="phoneNumber" 
-                name="phoneNumber" 
+                id="phoneNo" 
+                name="phoneNo" 
                 placeholder="Enter phone number" 
-                defaultValue={profile?.phone_number || ''}
+                defaultValue={profile?.phone_no || ''}
+              />
+            </div>
+            
+            <div className="space-y-2">
+              <Label htmlFor="activityCountry">Country of Activity</Label>
+              <Input 
+                id="activityCountry" 
+                name="activityCountry" 
+                placeholder="Enter country of business activity" 
+                defaultValue={profile?.activity_country || ''}
+              />
+            </div>
+            
+            <div className="space-y-2">
+              <Label htmlFor="residenceCity">City of Residence</Label>
+              <Input 
+                id="residenceCity" 
+                name="residenceCity" 
+                placeholder="Enter city of residence" 
+                defaultValue={profile?.residence_city || ''}
+              />
+            </div>
+            
+            <div className="space-y-2">
+              <Label htmlFor="description">Company Description</Label>
+              <Textarea 
+                id="description" 
+                name="description" 
+                placeholder="Enter a brief description of your company" 
+                defaultValue={profile?.description || ''}
+                rows={4}
               />
             </div>
             

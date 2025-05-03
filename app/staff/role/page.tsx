@@ -25,7 +25,7 @@ export default async function StaffRolePage({
   if (hasRole) {
     // Role exists, get current role and redirect to appropriate dashboard
     const { data } = await supabase
-      .from('staff_roles')
+      .from('staff')
       .select('role')
       .eq('id', user.id)
       .single()

@@ -30,7 +30,7 @@ export default async function SignInPage({
             <TabsContent value="vendor" className="py-4">
               <div className="flex flex-col space-y-2">
                 <p className="text-sm text-muted-foreground mb-4">
-                  Sign in as a vendor to manage your company profile and tenders.
+                  Sign in as a vendor to submit applications for tenders and manage your company profile.
                 </p>
                 <GoogleSignInButton action={vendorGoogleSignIn} type="vendor" />
               </div>
@@ -38,7 +38,7 @@ export default async function SignInPage({
             <TabsContent value="staff" className="py-4">
               <div className="flex flex-col space-y-2">
                 <p className="text-sm text-muted-foreground mb-4">
-                  Sign in as staff to access procurement or committee dashboards.
+                  Sign in as procurement officer or committee officer to manage tenders and evaluate applications.
                 </p>
                 <GoogleSignInButton action={staffGoogleSignIn} type="staff" />
               </div>

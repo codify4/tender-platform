@@ -6,6 +6,30 @@ import { Button } from '@/components/ui/button'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import Link from 'next/link'
 
+// Define types for the data structure
+type TenderData = {
+  id: string;
+  title: string;
+  deadline: string;
+}
+
+type ApplicationData = {
+  id: string;
+  status: string;
+  tenders: TenderData;
+}
+
+type EvaluationData = {
+  id: string;
+  score: number | null;
+  application_id: string;
+  applications: {
+    tender_id: string;
+    vendor_id: string;
+  };
+  evaluated_by: string;
+}
+
 export default async function CommitteeDashboardPage({
   searchParams,
 }: {
@@ -28,21 +52,53 @@ export default async function CommitteeDashboardPage({
     redirect('/staff/role?message=You do not have access to this dashboard')
   }
   
-  // Fetch evaluation statistics (mock data for now)
-  const evalStats = {
-    pendingEvaluation: 8,
-    completed: 5,
-    inProgress: 3, 
-    myAssignments: 4
+  // Fetch applications waiting for evaluation
+  const { data: applications, error: applicationsError } = await supabase
+    .from('applications')
+    .select(`
+      id,
+      status,
+      tenders!inner(id, title, deadline)
+    `)
+    .in('status', ['submitted', 'under_review'])
+  
+  if (applicationsError) {
+    console.error('Error fetching applications:', applicationsError)
   }
   
-  // Fetch recent evaluation tasks (mock data for now)
-  const recentEvaluations = [
-    { id: 1, title: "IT Equipment Supply", deadline: "2023-11-30", status: "pending", criteria: 5 },
-    { id: 2, title: "Office Renovation", deadline: "2023-12-15", status: "in_progress", criteria: 7 },
-    { id: 3, title: "Consulting Services", deadline: "2023-12-05", status: "pending", criteria: 4 },
-    { id: 4, title: "Software Licenses", deadline: "2023-11-20", status: "completed", criteria: 6 },
-  ]
+  // Fetch evaluations in progress
+  const { data: evaluations, error: evaluationsError } = await supabase
+    .from('evaluated_applications')
+    .select(`
+      id,
+      score,
+      application_id,
+      applications!inner(tender_id, vendor_id),
+      evaluated_by
+    `)
+    .eq('evaluated_by', user.id)
+  
+  if (evaluationsError) {
+    console.error('Error fetching evaluations:', evaluationsError)
+  }
+  
+  // Prepare stats
+  const evalStats = {
+    pendingEvaluation: applications?.filter(app => app.status === 'submitted')?.length || 0,
+    inProgress: applications?.filter(app => app.status === 'under_review')?.length || 0,
+    completed: evaluations?.filter(evaluation => evaluation.score !== null)?.length || 0,
+    myAssignments: evaluations?.length || 0
+  }
+  
+  // Transform applications data for display
+  const recentEvaluations = applications ? 
+    (applications as unknown as ApplicationData[]).map(app => ({
+      id: app.id,
+      title: app.tenders.title || 'Unknown Tender',
+      deadline: app.tenders.deadline ? new Date(app.tenders.deadline).toLocaleDateString() : 'N/A',
+      status: app.status,
+      criteria: 0 // This would need to be fetched from a criteria table if available
+    })) : []
   
   return (
     <div className="flex w-full flex-col p-8">
@@ -117,15 +173,15 @@ export default async function CommitteeDashboardPage({
                     <div>{evaluation.deadline}</div>
                     <div>
                       <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold ${
-                        evaluation.status === 'pending'
+                        evaluation.status === 'pending' || evaluation.status === 'submitted'
                           ? 'bg-yellow-50 text-yellow-600'
-                          : evaluation.status === 'in_progress'
+                          : evaluation.status === 'under_review'
                           ? 'bg-blue-50 text-blue-600'
                           : 'bg-green-50 text-green-600'
                       }`}>
-                        {evaluation.status === 'pending'
+                        {evaluation.status === 'pending' || evaluation.status === 'submitted'
                           ? 'Pending'
-                          : evaluation.status === 'in_progress'
+                          : evaluation.status === 'under_review'
                           ? 'In Progress'
                           : 'Completed'}
                       </span>
@@ -138,7 +194,7 @@ export default async function CommitteeDashboardPage({
                         asChild
                       >
                         <Link href={`/staff/committee-dashboard/evaluation/${evaluation.id}`}>
-                          {evaluation.status === 'completed' ? 'View' : 'Evaluate'}
+                          {evaluation.status === 'approved' ? 'View' : 'Evaluate'}
                         </Link>
                       </Button>
                     </div>
