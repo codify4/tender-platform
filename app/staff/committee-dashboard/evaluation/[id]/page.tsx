@@ -1,19 +1,13 @@
 import { redirect } from 'next/navigation'
 import { createClient } from '@/utils/supabase/server'
 import { getStaffRole } from '@/actions/staff-auth'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { 
-  ChevronLeft, 
-  FileText, 
-  Download, 
-  Calendar, 
-  Building, 
-  Sparkles,
+  ChevronLeft,
   CheckCircle2,
   AlertCircle,
-  XCircle,
   BarChartHorizontal,
   FileBarChart,
   Users,
@@ -36,7 +30,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import { Separator } from '@/components/ui/separator'
 
 interface PageProps {
   params: {
@@ -227,28 +220,6 @@ export default async function EvaluationResultsPage({ params }: PageProps) {
               <Button variant="outline" className="w-full">
                 Add Your Comments
               </Button>
-            </div>
-            
-            <Separator className="my-4" />
-            
-            <div className="space-y-2">
-              <p className="text-sm font-medium">Validation</p>
-              <div className="flex flex-col gap-2">
-                <Button variant="outline" className="w-full text-green-600 border-green-200 hover:bg-green-50 flex justify-start gap-2">
-                  <CheckCircle2 className="h-4 w-4" />
-                  <span>Approve Evaluation</span>
-                </Button>
-                
-                <Button variant="outline" className="w-full text-left flex justify-start gap-2">
-                  <AlertCircle className="h-4 w-4" />
-                  <span>Request Human Review</span>
-                </Button>
-                
-                <Button variant="outline" className="w-full text-left flex justify-start gap-2 text-red-600 border-red-200 hover:bg-red-50">
-                  <XCircle className="h-4 w-4" />
-                  <span>Reject Evaluation</span>
-                </Button>
-              </div>
             </div>
           </CardContent>
         </Card>
