@@ -3,7 +3,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { vendorGoogleSignIn } from '@/actions/vendor-auth'
 import { staffGoogleSignIn } from '@/actions/staff-auth'
 import GoogleSignInButton from '@/components/ui/google-signin-button'
-import { use } from 'react'
 
 export default async function SignInPage({
   searchParams,
