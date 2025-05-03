@@ -6,13 +6,12 @@ import { Button } from '@/components/ui/button'
 import Link from 'next/link'
 import { logOut } from '@/actions/auth'
 
-interface PageProps {
-  searchParams?: { message?: string }
-}
-
 export default async function VendorDashboardPage({
   searchParams,
-}: PageProps = {}) {
+}: {
+  searchParams: Promise<{ message?: string }>
+}) {
+  const { message } = await searchParams
   const supabase = await createClient()
   
   // Check if user is authenticated
@@ -38,9 +37,9 @@ export default async function VendorDashboardPage({
         </form>
       </div>
       
-      {searchParams?.message && (
-        <p className="mb-6 p-4 bg-green-50 text-green-700 rounded">
-          {searchParams.message}
+      {message && (
+        <p className="mt-4 p-4 bg-green-50 text-green-500 text-center rounded">
+          {message}
         </p>
       )}
       

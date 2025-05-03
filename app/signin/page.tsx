@@ -3,14 +3,16 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { vendorGoogleSignIn } from '@/actions/vendor-auth'
 import { staffGoogleSignIn } from '@/actions/staff-auth'
 import GoogleSignInButton from '@/components/ui/google-signin-button'
+import { use } from 'react'
 
-interface PageProps {
-  searchParams: { message?: string }
-}
-
-export default function SignInPage({
+export default async function SignInPage({
   searchParams,
-}: PageProps) {
+}: {
+  searchParams: Promise<{ message?: string }>
+}) {
+  // Await searchParams to access its properties
+  const { message } = await searchParams
+  
   return (
     <div className="flex h-screen w-full items-center justify-center">
       <Card className="w-full max-w-md">
@@ -44,9 +46,9 @@ export default function SignInPage({
             </TabsContent>
           </Tabs>
           
-          {searchParams?.message && (
+          {message && (
             <p className="mt-4 p-4 bg-red-50 text-red-500 text-center rounded">
-              {searchParams.message}
+              {message}
             </p>
           )}
         </CardContent>

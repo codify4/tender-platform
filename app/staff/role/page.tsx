@@ -4,13 +4,12 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button'
 import { setStaffRole, checkStaffRoleExists } from '@/actions/staff-auth'
 
-interface PageProps {
-  searchParams: { message?: string }
-}
-
 export default async function StaffRolePage({
   searchParams,
-}: PageProps) {
+}: {
+  searchParams: Promise<{ message?: string }>
+}) {
+  const { message } = await searchParams
   const supabase = await createClient()
   
   // Check if user is authenticated
@@ -49,22 +48,22 @@ export default async function StaffRolePage({
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid grid-cols-1 gap-4">
-            <form action={() => setStaffRole('procurement_officer')}>
+            <form action={setStaffRole.bind(null, 'procurement_officer')}>
               <Button type="submit" className="w-full h-24 text-lg">
                 Procurement Officer
               </Button>
             </form>
             
-            <form action={() => setStaffRole('committee_officer')}>
+            <form action={setStaffRole.bind(null, 'committee_officer')}>
               <Button type="submit" variant="outline" className="w-full h-24 text-lg">
                 Committee Officer
               </Button>
             </form>
           </div>
           
-          {searchParams?.message && (
+          {message && (
             <p className="mt-4 p-4 bg-red-50 text-red-500 text-center rounded">
-              {searchParams.message}
+              {message}
             </p>
           )}
         </CardContent>
