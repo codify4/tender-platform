@@ -5,6 +5,7 @@ import {
   FileText,
   LayoutDashboard,
   Star,
+  FilePlus2,
 } from "lucide-react"
 
 import { NavMain } from "@/components/nav-main"
@@ -27,6 +28,11 @@ const data = {
       url: "/staff/procurement-dashboard",
       icon: LayoutDashboard,
       isActive: true,
+    },
+    {
+      title: "Tenders",
+      url: "/staff/procurement-dashboard/tenders",
+      icon: FilePlus2,
     },
     {
       title: "Submissions",

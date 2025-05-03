@@ -64,16 +64,15 @@ export default async function SubmissionsPage() {
             
             <TabsContent value="all">
               <div className="rounded-md border">
-                <div className="grid grid-cols-6 p-4 font-medium border-b">
+                <div className="grid grid-cols-5 p-4 font-medium border-b">
                   <div>Vendor</div>
                   <div>Tender</div>
                   <div>Submission Date</div>
                   <div>Status</div>
                   <div>Score</div>
-                  <div>Actions</div>
                 </div>
                 {submissions.map((submission) => (
-                  <div key={submission.id} className="grid grid-cols-6 p-4 border-b last:border-0">
+                  <div key={submission.id} className="grid grid-cols-5 p-4 border-b last:border-0">
                     <div className="font-medium">{submission.vendor}</div>
                     <div>{submission.tender}</div>
                     <div>{submission.date}</div>
@@ -93,9 +92,6 @@ export default async function SubmissionsPage() {
                       </span>
                     </div>
                     <div>{submission.score}</div>
-                    <div>
-                      <Button variant="ghost" size="sm">View Details</Button>
-                    </div>
                   </div>
                 ))}
               </div>
@@ -103,18 +99,17 @@ export default async function SubmissionsPage() {
             
             <TabsContent value="pending">
               <div className="rounded-md border">
-                <div className="grid grid-cols-6 p-4 font-medium border-b">
+                <div className="grid grid-cols-5 p-4 font-medium border-b">
                   <div>Vendor</div>
                   <div>Tender</div>
                   <div>Submission Date</div>
                   <div>Status</div>
                   <div>Score</div>
-                  <div>Actions</div>
                 </div>
                 {submissions
                   .filter(submission => submission.status === 'pending')
                   .map((submission) => (
-                    <div key={submission.id} className="grid grid-cols-6 p-4 border-b last:border-0">
+                    <div key={submission.id} className="grid grid-cols-5 p-4 border-b last:border-0">
                       <div className="font-medium">{submission.vendor}</div>
                       <div>{submission.tender}</div>
                       <div>{submission.date}</div>
@@ -124,9 +119,6 @@ export default async function SubmissionsPage() {
                         </span>
                       </div>
                       <div>{submission.score}</div>
-                      <div>
-                        <Button variant="ghost" size="sm">View Details</Button>
-                      </div>
                     </div>
                   ))}
               </div>
@@ -134,18 +126,17 @@ export default async function SubmissionsPage() {
             
             <TabsContent value="reviewed">
               <div className="rounded-md border">
-                <div className="grid grid-cols-6 p-4 font-medium border-b">
+                <div className="grid grid-cols-5 p-4 font-medium border-b">
                   <div>Vendor</div>
                   <div>Tender</div>
                   <div>Submission Date</div>
                   <div>Status</div>
                   <div>Score</div>
-                  <div>Actions</div>
                 </div>
                 {submissions
                   .filter(submission => submission.status !== 'pending')
                   .map((submission) => (
-                    <div key={submission.id} className="grid grid-cols-6 p-4 border-b last:border-0">
+                    <div key={submission.id} className="grid grid-cols-5 p-4 border-b last:border-0">
                       <div className="font-medium">{submission.vendor}</div>
                       <div>{submission.tender}</div>
                       <div>{submission.date}</div>
@@ -163,9 +154,6 @@ export default async function SubmissionsPage() {
                         </span>
                       </div>
                       <div>{submission.score}</div>
-                      <div>
-                        <Button variant="ghost" size="sm">View Details</Button>
-                      </div>
                     </div>
                   ))}
               </div>
@@ -176,7 +164,6 @@ export default async function SubmissionsPage() {
           <div className="text-sm text-muted-foreground">
             Showing {submissions.length} submissions
           </div>
-          <Button>Create New Submission</Button>
         </CardFooter>
       </Card>
     </div>

@@ -5,7 +5,6 @@ import { getStaffRole } from '@/actions/staff-auth'
 import { Button } from '@/components/ui/button'
 import { logOut } from '@/actions/auth'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import Link from 'next/link'
 
 export default async function ProcurementDashboardPage({
   searchParams,
@@ -47,12 +46,8 @@ export default async function ProcurementDashboardPage({
   
   return (
     <div className="flex w-full flex-col p-8">
-      <div className="flex justify-between items-center mb-8">
-        <h1 className="text-3xl font-bold">Procurement Officer Dashboard</h1>
-        <form action={logOut}>
-          <Button variant="outline" type="submit">Log Out</Button>
-        </form>
-      </div>
+      <h1 className="text-3xl font-bold mb-6">Procurement Officer Dashboard</h1>
+
       
       {message && (
         <p className="mt-4 p-4 bg-green-50 text-green-500 text-center rounded">
@@ -101,63 +96,33 @@ export default async function ProcurementDashboardPage({
           <CardDescription>Manage your procurement activities</CardDescription>
         </CardHeader>
         <CardContent>
-          <Tabs defaultValue="recent">
-            <TabsList className="mb-4">
-              <TabsTrigger value="recent">Recent Tenders</TabsTrigger>
-              <TabsTrigger value="activity">Recent Activity</TabsTrigger>
-            </TabsList>
-            
-            <TabsContent value="recent">
-              <div className="rounded-md border">
-                <div className="grid grid-cols-5 p-4 font-medium border-b">
-                  <div>Title</div>
-                  <div>Deadline</div>
-                  <div>Status</div>
-                  <div>Submissions</div>
-                  <div>Actions</div>
+          <div className="rounded-md border">
+            <div className="grid grid-cols-4 p-4 font-medium border-b">
+              <div>Title</div>
+              <div>Deadline</div>
+              <div>Status</div>
+              <div>Submissions</div>
+            </div>
+            {recentTenders.map((tender) => (
+              <div key={tender.id} className="grid grid-cols-4 p-4 border-b last:border-0">
+                <div className="font-medium">{tender.title}</div>
+                <div>{tender.deadline}</div>
+                <div>
+                  <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold ${
+                    tender.status === 'active' 
+                      ? 'bg-green-50 text-green-700' 
+                      : tender.status === 'completed'
+                      ? 'bg-blue-50 text-blue-700'
+                      : 'bg-orange-50 text-orange-700'
+                  }`}>
+                    {tender.status.charAt(0).toUpperCase() + tender.status.slice(1)}
+                  </span>
                 </div>
-                {recentTenders.map((tender) => (
-                  <div key={tender.id} className="grid grid-cols-5 p-4 border-b last:border-0">
-                    <div className="font-medium">{tender.title}</div>
-                    <div>{tender.deadline}</div>
-                    <div>
-                      <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold ${
-                        tender.status === 'active' 
-                          ? 'bg-green-50 text-green-700' 
-                          : tender.status === 'completed'
-                          ? 'bg-blue-50 text-blue-700'
-                          : 'bg-orange-50 text-orange-700'
-                      }`}>
-                        {tender.status.charAt(0).toUpperCase() + tender.status.slice(1)}
-                      </span>
-                    </div>
-                    <div>{tender.submissions}</div>
-                    <div>
-                      <Button variant="ghost" size="sm">View Details</Button>
-                    </div>
-                  </div>
-                ))}
+                <div>{tender.submissions}</div>
               </div>
-            </TabsContent>
-            
-            <TabsContent value="activity">
-              <div className="space-y-4">
-                <p className="text-muted-foreground">Recent activity will be displayed here.</p>
-                <div className="p-8 text-center border rounded-lg border-dashed">
-                  <p className="text-muted-foreground">No recent activity</p>
-                </div>
-              </div>
-            </TabsContent>
-          </Tabs>
+            ))}
+          </div>
         </CardContent>
-        <CardFooter className="flex justify-end border-t pt-6">
-          <Link href="/staff/procurement-dashboard/submissions">
-            <Button variant="outline" className="mr-2">View All Submissions</Button>
-          </Link>
-          <Link href="/staff/procurement-dashboard/evaluation">
-            <Button>Go to Evaluation</Button>
-          </Link>
-        </CardFooter>
       </Card>
     </div>
   )
