@@ -41,9 +41,9 @@ export default function Home() {
                 Evaluation
               </a>
             </nav>
-            <div>
+            <Link href="/signin">
               <Button className="bg-[#1a3c70] hover:bg-[#132d54] text-white">Get Started</Button>
-            </div>
+            </Link>
           </div>
         </div>
       </header>
@@ -65,19 +65,12 @@ export default function Home() {
               <p className="text-xl mb-8 text-blue-100">
                 AI-powered platform that simplifies tender management, evaluation, and compliance for AADF projects.
               </p>
-              <div className="flex flex-col sm:flex-row gap-4">
+              <Link href="/signin" className="flex flex-col sm:flex-row gap-4">
                 <Button size="lg" className="bg-[#d42e4e] hover:bg-[#b82642] text-white">
-                  Get Started as Vendor
+                  Get Started
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>
-                <Button
-                  size="lg"
-                  variant="outline"
-                  className="bg-transparent border-white text-white hover:bg-white/10"
-                >
-                  Get Started as Staff
-                </Button>
-              </div>
+              </Link>
             </motion.div>
             <motion.div
               initial={{ opacity: 0, scale: 0.9 }}
