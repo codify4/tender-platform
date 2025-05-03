@@ -84,7 +84,7 @@ export function SubmissionCard({ submission }: SubmissionCardProps) {
                 submission.score >= 80 
                   ? "bg-green-500" 
                   : submission.score >= 60 
-                  ? "bg-amber-500" 
+                  ? "bg-[#1a3c70]" 
                   : "bg-red-500"
               }`}>
                 {submission.score}/100

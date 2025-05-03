@@ -306,7 +306,7 @@ export default async function EvaluationResultsPage({ params }: PageProps) {
                 
                 <div className="space-y-2 p-4 border rounded-md">
                   <div className="flex items-center gap-2">
-                    <FlaskConical className="h-4 w-4 text-amber-600" />
+                    <FlaskConical className="h-4 w-4 text-[#1a3c70]" />
                     <h3 className="text-sm font-medium">Trials (10%)</h3>
                   </div>
                   <Progress value={evaluation.technicalEvaluation.trials.score} className="h-2" />
@@ -336,13 +336,13 @@ export default async function EvaluationResultsPage({ params }: PageProps) {
                 
                 <div>
                   <h3 className="text-sm font-medium flex items-center mb-2">
-                    <AlertCircle className="h-4 w-4 text-amber-600 mr-1" />
+                    <AlertCircle className="h-4 w-4 text-red-500 mr-1" />
                     Weaknesses
                   </h3>
                   <ul className="space-y-1">
                     {evaluation.technicalEvaluation.weaknesses.map((weakness, index) => (
                       <li key={index} className="text-sm flex items-start">
-                        <span className="text-amber-600 mr-2">•</span>
+                        <span className="text-red-500 mr-2">•</span>
                         {weakness}
                       </li>
                     ))}

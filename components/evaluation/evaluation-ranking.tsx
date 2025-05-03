@@ -82,7 +82,6 @@ export function EvaluationRanking({
               <TableHead className="text-center">Overall Score</TableHead>
               <TableHead className="text-center">Technical</TableHead>
               <TableHead className="text-center">Financial</TableHead>
-              <TableHead className="text-center">Compliance</TableHead>
               <TableHead className="text-center">Status</TableHead>
               <TableHead className="text-right">Actions</TableHead>
             </TableRow>
@@ -137,17 +136,6 @@ export function EvaluationRanking({
                       : "bg-red-50 text-red-700"
                   }>
                     {submission.financialScore}
-                  </Badge>
-                </TableCell>
-                <TableCell className="text-center">
-                  <Badge variant="outline" className={
-                    submission.complianceScore >= 80 
-                      ? "bg-green-50 text-green-700" 
-                      : submission.complianceScore >= 60 
-                      ? "bg-amber-50 text-amber-700" 
-                      : "bg-red-50 text-red-700"
-                  }>
-                    {submission.complianceScore}
                   </Badge>
                 </TableCell>
                 <TableCell className="text-center">

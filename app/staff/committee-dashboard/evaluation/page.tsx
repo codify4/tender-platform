@@ -215,7 +215,7 @@ export default async function EvaluationPage() {
                       <CardTitle className="flex items-center">
                         {tender.title}
                         {tender.isLocked && (
-                          <Badge variant="outline" className="ml-2 flex items-center gap-1 text-amber-600">
+                          <Badge variant="outline" className="ml-2 flex items-center gap-1 text-[#1a3c70]">
                             <LockIcon className="h-3 w-3" />
                             Locked
                           </Badge>
@@ -234,8 +234,8 @@ export default async function EvaluationPage() {
                 <CardContent>
                   <div className="space-y-4">
                     {tender.isLocked ? (
-                      <div className="p-4 bg-amber-50 rounded-lg text-center">
-                        <p className="text-amber-600 font-medium mb-1">Evaluation Locked</p>
+                      <div className="p-4 bg-[#e6edf7] rounded-lg text-center">
+                        <p className="text-[#1a3c70] font-medium mb-1">Evaluation Locked</p>
                         <p className="text-sm text-muted-foreground">
                           This tender cannot be evaluated until after the submission end date ({tender.endDate}).
                         </p>
