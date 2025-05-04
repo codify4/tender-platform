@@ -1,75 +1,63 @@
-import { redirect } from 'next/navigation'
-import { createClient } from '@/utils/supabase/server'
-import { getStaffRole } from '@/actions/staff-auth'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { FileText, CheckCircle, AlertCircle, ArrowLeft, Download, Star } from 'lucide-react'
-import Link from 'next/link'
+import { redirect } from "next/navigation"
+import { createClient } from "@/utils/supabase/server"
+import { getStaffRole } from "@/actions/staff-auth"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
+import { Badge } from "@/components/ui/badge"
+import { FileText, CheckCircle, AlertCircle, ArrowLeft, Download, Star } from "lucide-react"
+import Link from "next/link"
+import { mockSubmissions } from "@/lib/submissions"
+import { mockEvaluations } from "@/lib/evaluations"
 
-// Define types for the page props
 type PageProps = {
-  params: {
-    id: string
-  }
+  params: Promise<{ id: string }>
+  searchParams: Promise<{ error?: string }>
 }
 
-export default async function SubmissionDetailsPage({ params }: PageProps) {
-  const submissionId = params.id
-  const supabase = await createClient()
-  
-  // Check if user is authenticated
-  const { data: { user } } = await supabase.auth.getUser()
-  
-  if (!user) {
-    redirect('/signin?message=Please sign in to continue')
-  }
-  
-  // Verify role
-  const role = await getStaffRole()
-  
-  if (role !== 'committee_officer') {
-    redirect('/staff/role?message=You do not have access to this page')
-  }
+export default async function SubmissionDetailsPage({ params, searchParams }: PageProps) {
+  // Await params and searchParams as they are promises in Next.js 15
+  const resolvedParams = await params
+  const resolvedSearchParams = await searchParams
 
-  // Mock data for submission details
-  // In a real app, we would fetch the specific submission from the database
-  const submission = {
-    id: submissionId,
-    vendor: "TechCorp Solutions",
-    tenderTitle: "IT Equipment Supply",
-    tenderReference: "TEN2023-101",
-    submittedAt: "2023-11-15T10:30:00Z",
-    status: "pending",
-    score: null,
-    documents: [
-      { id: "doc1", name: "Technical Proposal", type: "pdf", size: "2.5 MB" },
-      { id: "doc2", name: "Financial Proposal", type: "pdf", size: "1.3 MB" },
-      { id: "doc3", name: "Company Profile", type: "pdf", size: "4.7 MB" },
-      { id: "doc4", name: "Certifications", type: "zip", size: "8.1 MB" },
-    ],
-    criteria: [
-      { id: "c1", title: "Technical Specifications", weight: 30, maxScore: 30 },
-      { id: "c2", title: "Delivery Timeline", weight: 15, maxScore: 15 },
-      { id: "c3", title: "Experience", weight: 20, maxScore: 20 },
-      { id: "c4", title: "Price", weight: 25, maxScore: 25 },
-      { id: "c5", title: "Warranty & Support", weight: 10, maxScore: 10 },
-    ],
-    evaluations: []
-  }
+  const submissionId = resolvedParams.id
+  const error = resolvedSearchParams.error
+
+  const supabase = await createClient()
+
+  // Authentication checks
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+  if (!user) redirect("/signin?message=Please sign in to continue")
+
+  // Role verification
+  const role = await getStaffRole()
+  if (role !== "committee_officer") redirect("/staff/role?message=No access")
+
+  // Fetch submission data from mock data
+  const submission = mockSubmissions.find((sub) => sub.id === submissionId)
+  if (!submission) redirect("/staff/committee-dashboard/submissions")
+
+  // Fetch evaluation if exists from mock data
+  const evaluation = mockEvaluations.find((evaluation) => evaluation.application_id === submissionId)
 
   // Format date
-  const formattedDate = new Date(submission.submittedAt).toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit'
+  const formattedDate = new Date(submission.created_at).toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
   })
 
   return (
     <div className="flex w-full flex-col p-8">
+      {resolvedSearchParams.error && (
+        <div className="mb-4 p-4 bg-red-100 text-red-700 rounded-md">
+          Error: {resolvedSearchParams.error === "evaluation_failed" ? "Evaluation failed" : "Unknown error"}
+        </div>
+      )}
+
       <div className="flex items-center gap-2 mb-6">
         <Button variant="ghost" size="sm" asChild className="mb-2">
           <Link href="/staff/committee-dashboard/submissions">
@@ -78,24 +66,30 @@ export default async function SubmissionDetailsPage({ params }: PageProps) {
           </Link>
         </Button>
       </div>
-      
+
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6">
         <div>
-          <h1 className="text-3xl font-bold">{submission.tenderTitle}</h1>
+          <h1 className="text-3xl font-bold">{submission.tender_title}</h1>
           <p className="text-muted-foreground">
-            Reference: {submission.tenderReference} | Submitted by: {submission.vendor}
+            Reference: {submission.tender_reference} | Submitted by: {submission.vendor_name}
           </p>
         </div>
         <div className="flex gap-2 mt-4 md:mt-0">
-          <Button variant="outline" asChild>
-            <Link href={`/staff/committee-dashboard/evaluation/${submission.id}`}>
-              <Star className="h-4 w-4 mr-1" />
-              Evaluate Submission
-            </Link>
-          </Button>
+          {!evaluation ? (
+            <Button variant="outline" asChild>
+              <Link href={`/staff/committee-dashboard/evaluation/${submissionId}`}>
+                <Star className="h-4 w-4 mr-1" />
+                Evaluate Submission
+              </Link>
+            </Button>
+          ) : (
+            <Button asChild>
+              <Link href={`/staff/committee-dashboard/evaluation/${submissionId}`}>View Evaluation</Link>
+            </Button>
+          )}
         </div>
       </div>
-      
+
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
         <Card>
           <CardHeader className="pb-2">
@@ -110,15 +104,15 @@ export default async function SubmissionDetailsPage({ params }: PageProps) {
             <CardTitle className="text-sm font-medium text-muted-foreground">Status</CardTitle>
           </CardHeader>
           <CardContent>
-            <Badge className={
-              submission.status === 'pending' 
-                ? 'bg-yellow-50 text-yellow-700 hover:bg-yellow-50' 
-                : submission.status === 'evaluated'
-                ? 'bg-blue-50 text-blue-700 hover:bg-blue-50'
-                : submission.status === 'recommended'
-                ? 'bg-green-50 text-green-700 hover:bg-green-50'
-                : 'bg-red-50 text-red-700 hover:bg-red-50'
-            }>
+            <Badge
+              className={
+                submission.status === "pending"
+                  ? "bg-yellow-50 text-yellow-700 hover:bg-yellow-50"
+                  : submission.status === "evaluated"
+                    ? "bg-blue-50 text-blue-700 hover:bg-blue-50"
+                    : "bg-green-50 text-green-700 hover:bg-green-50"
+              }
+            >
               {submission.status.charAt(0).toUpperCase() + submission.status.slice(1)}
             </Badge>
           </CardContent>
@@ -128,11 +122,11 @@ export default async function SubmissionDetailsPage({ params }: PageProps) {
             <CardTitle className="text-sm font-medium text-muted-foreground">Score</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="font-medium">{submission.score !== null ? `${submission.score}/100` : 'Not evaluated yet'}</div>
+            <div className="font-medium">{evaluation ? `${evaluation.score}/100` : "Not evaluated yet"}</div>
           </CardContent>
         </Card>
       </div>
-      
+
       <Card className="mb-6">
         <CardHeader>
           <CardTitle>Submission Documents</CardTitle>
@@ -145,7 +139,7 @@ export default async function SubmissionDetailsPage({ params }: PageProps) {
               <div>Type</div>
               <div>Actions</div>
             </div>
-            {submission.documents.map((doc) => (
+            {submission.documents.map((doc: any) => (
               <div key={doc.id} className="grid grid-cols-3 p-4 border-b last:border-0">
                 <div className="font-medium flex items-center">
                   <FileText className="h-4 w-4 mr-2 text-blue-600" />
@@ -167,7 +161,7 @@ export default async function SubmissionDetailsPage({ params }: PageProps) {
           </div>
         </CardContent>
       </Card>
-      
+
       <Card>
         <CardHeader>
           <CardTitle>Evaluation Criteria</CardTitle>
@@ -180,7 +174,7 @@ export default async function SubmissionDetailsPage({ params }: PageProps) {
               <div>Weight</div>
               <div>Maximum Score</div>
             </div>
-            {submission.criteria.map((criteria) => (
+            {submission.criteria.map((criteria: any) => (
               <div key={criteria.id} className="grid grid-cols-3 p-4 border-b last:border-0">
                 <div className="font-medium">{criteria.title}</div>
                 <div>{criteria.weight}%</div>
@@ -192,20 +186,25 @@ export default async function SubmissionDetailsPage({ params }: PageProps) {
         <CardFooter className="border-t pt-6">
           <div className="w-full flex justify-between items-center">
             <div className="flex items-center">
-              {submission.status === 'pending' ? (
+              {!evaluation ? (
                 <AlertCircle className="h-5 w-5 text-yellow-600 mr-2" />
               ) : (
                 <CheckCircle className="h-5 w-5 text-green-600 mr-2" />
               )}
               <span className="text-sm text-muted-foreground">
-                {submission.status === 'pending' 
-                  ? 'This submission is pending evaluation'
-                  : 'This submission has been evaluated'}
+                {!evaluation ? "This submission is pending evaluation" : "This submission has been evaluated"}
               </span>
             </div>
             <Button asChild>
-              <Link href={`/staff/committee-dashboard/evaluation/${submission.id}`}>
-                Proceed to Evaluation
+              <Link href={`/staff/committee-dashboard/evaluation/${submissionId}`}>
+                {!evaluation ? (
+                  <>
+                    <Star className="h-4 w-4 mr-1" />
+                    Evaluate Now
+                  </>
+                ) : (
+                  "View Evaluation Results"
+                )}
               </Link>
             </Button>
           </div>
@@ -213,4 +212,4 @@ export default async function SubmissionDetailsPage({ params }: PageProps) {
       </Card>
     </div>
   )
-} 
+}
