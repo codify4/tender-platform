@@ -100,7 +100,7 @@ export function EvaluationRanking({
                 <TableCell className="text-center">
                   <div className="flex justify-center">
                     <div className={`h-8 rounded-md flex items-center justify-center px-3 font-medium text-white ${
-                      submission.score >= 80 
+                      submission.score >= 75 
                         ? "bg-green-500" 
                         : submission.score >= 60 
                         ? "bg-amber-500" 

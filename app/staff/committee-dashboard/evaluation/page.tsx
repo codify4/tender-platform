@@ -40,19 +40,8 @@ export default async function EvaluationPage() {
       isLocked: false,
       submissions: [
         { 
-          id: 1, 
-          rank: 1, 
-          vendor: "TechCorp Solutions", 
-          score: 87, 
-          technicalScore: 85, 
-          financialScore: 92, 
-          complianceScore: 90, 
-          status: "recommended" as const,
-          evaluationDate: "2023-11-15" 
-        },
-        { 
           id: 2, 
-          rank: 2, 
+          rank: 1, 
           vendor: "Buildex Construction", 
           score: 79, 
           technicalScore: 82, 
@@ -63,7 +52,7 @@ export default async function EvaluationPage() {
         },
         { 
           id: 3, 
-          rank: 3, 
+          rank: 2, 
           vendor: "Agile Consulting Group", 
           score: 72, 
           technicalScore: 68, 
@@ -74,7 +63,7 @@ export default async function EvaluationPage() {
         },
         { 
           id: 4, 
-          rank: 4, 
+          rank: 3, 
           vendor: "DigiTech Systems", 
           score: 65, 
           technicalScore: 60, 
