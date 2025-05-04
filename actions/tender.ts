@@ -2,110 +2,87 @@
 
 import { createClient } from '@/utils/supabase/server'
 import { revalidatePath } from 'next/cache'
-import { redirect } from 'next/navigation'
-import { getStaffRole } from './staff-auth'
 
-/**
- * Create a new tender with optional document uploads
- */
 export async function createTender(formData: FormData) {
-  const supabase = await createClient()
-  
-  // Check authentication
-  const { data: { user } } = await supabase.auth.getUser()
-  
-  if (!user) {
-    redirect('/signin?message=Please sign in to continue')
-  }
-  
-  // Check role permission
-  const role = await getStaffRole()
-  
-  if (role !== 'procurement_officer') {
-    redirect('/staff/role?message=You do not have permission to create tenders')
-  }
-  
   try {
+    const supabase = await createClient()
+    
     // Extract form data
     const title = formData.get('title') as string
-    const reference = formData.get('reference') as string
-    const startDate = formData.get('startDate') as string
-    const endDate = formData.get('endDate') as string
-    const category = formData.get('category') as string
     const description = formData.get('description') as string
-    const eligibility = formData.get('eligibility') as string
-    const status = formData.get('status') as string
-    const documents = formData.getAll('documents')
+    const type = formData.get('type') as string
+    const ceiling_fund = parseFloat(formData.get('ceiling_fund') as string)
+    const published_at = formData.get('published_at') as string
+    const deadline = formData.get('deadline') as string
     
-    // Validate required fields
-    if (!title || !reference || !startDate || !endDate || !category || !description || !eligibility || !status) {
-      return { error: 'All required fields must be provided' }
+    // Get current user for created_by
+    const { data: { user } } = await supabase.auth.getUser()
+    
+    // Determine status based on publish date
+    const now = new Date()
+    const publishDate = new Date(published_at)
+    const deadlineDate = new Date(deadline)
+    
+    let status = 'draft'
+    if (publishDate <= now && now <= deadlineDate) {
+      status = 'active'
+    } else if (now > deadlineDate) {
+      status = 'closed'
     }
     
+    // Generate a reference number (if needed)
+    const reference = `TEN-${Date.now().toString().slice(-6)}`
+    
     // Insert tender into database
-    const { data: tenderData, error: tenderError } = await supabase
+    const { error } = await supabase
       .from('tenders')
       .insert({
         title,
-        reference,
-        start_date: startDate,
-        end_date: endDate,
-        category,
         description,
-        eligibility_criteria: eligibility,
+        type,
+        ceiling_fund,
+        published_at,
+        deadline,
         status,
-        created_by: user.id
+        created_by: user?.id
       })
-      .select('id')
-      .single()
     
-    if (tenderError) {
-      console.error('Error creating tender:', tenderError)
-      return { error: 'Failed to create tender' }
+    if (error) {
+      console.error('Error creating tender:', error)
+      return { success: false, error: error.message, redirect: '/staff/procurement-dashboard/tenders/new?error=' + encodeURIComponent(error.message) }
     }
     
-    const tenderId = tenderData.id
-    
-    // Upload documents if any
-    if (documents && documents.length > 0) {
-      for (const doc of documents) {
-        if (doc instanceof File && doc.size > 0) {
-          const fileName = `${tenderId}/${Date.now()}-${doc.name}`
-          
-          const { error: uploadError } = await supabase
-            .storage
-            .from('tender_documents')
-            .upload(fileName, doc, {
-              cacheControl: '3600',
-              upsert: false
-            })
-          
-          if (uploadError) {
-            console.error('Error uploading document:', uploadError)
-            return { error: 'Tender created but some documents failed to upload' }
-          }
-          
-          // Record the document in the database
-          await supabase
-            .from('tender_documents')
-            .insert({
-              tender_id: tenderId,
-              file_name: doc.name,
-              file_path: fileName,
-              file_type: doc.type,
-              file_size: doc.size,
-              uploaded_by: user.id
-            })
-        }
-      }
-    }
-    
-    // Revalidate paths and redirect
+    // Revalidate the tenders page
     revalidatePath('/staff/procurement-dashboard/tenders')
-    redirect('/staff/procurement-dashboard/tenders?message=Tender created successfully')
     
+    // Return success with redirect path
+    return { success: true, redirect: '/staff/procurement-dashboard/tenders' }
   } catch (error) {
     console.error('Error in createTender:', error)
-    return { error: 'An unexpected error occurred' }
+    return { success: false, error: 'Failed to create tender', redirect: '/staff/procurement-dashboard/tenders/new?error=' + encodeURIComponent('Failed to create tender') }
+  }
+}
+
+export async function deleteTender(tenderId: string) {
+  try {
+    const supabase = await createClient()
+    
+    const { error } = await supabase
+      .from('tenders')
+      .delete()
+      .eq('id', tenderId)
+    
+    if (error) {
+      console.error('Error deleting tender:', error)
+      return { success: false, error: error.message }
+    }
+    
+    // Revalidate the tenders page
+    revalidatePath('/staff/procurement-dashboard/tenders')
+    
+    return { success: true }
+  } catch (error) {
+    console.error('Error in deleteTender:', error)
+    return { success: false, error: 'Failed to delete tender' }
   }
 } 
