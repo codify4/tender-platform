@@ -42,7 +42,7 @@ export default async function EvaluationPage() {
         { 
           id: 1, 
           rank: 1, 
-          vendor: "TechCorp Ltd", 
+          vendor: "TechCorp Solutions", 
           score: 87, 
           technicalScore: 85, 
           financialScore: 92, 
@@ -53,7 +53,7 @@ export default async function EvaluationPage() {
         { 
           id: 2, 
           rank: 2, 
-          vendor: "IT Providers Inc", 
+          vendor: "Buildex Construction", 
           score: 79, 
           technicalScore: 82, 
           financialScore: 75, 
@@ -64,7 +64,7 @@ export default async function EvaluationPage() {
         { 
           id: 3, 
           rank: 3, 
-          vendor: "Compumax Solutions", 
+          vendor: "Agile Consulting Group", 
           score: 72, 
           technicalScore: 68, 
           financialScore: 85, 
@@ -96,7 +96,7 @@ export default async function EvaluationPage() {
         { 
           id: 5, 
           rank: 1, 
-          vendor: "BuildRight Construction", 
+          vendor: "TechCorp Solutions", 
           score: 82, 
           technicalScore: 80, 
           financialScore: 84, 
@@ -107,7 +107,7 @@ export default async function EvaluationPage() {
         { 
           id: 6, 
           rank: 2, 
-          vendor: "Premier Interiors", 
+          vendor: "Buildex Construction", 
           score: 75, 
           technicalScore: 78, 
           financialScore: 72, 
@@ -128,7 +128,7 @@ export default async function EvaluationPage() {
         { 
           id: 7, 
           rank: 1, 
-          vendor: "Strategic Advisors", 
+          vendor: "Agile Consulting Group", 
           score: 0, 
           technicalScore: 0, 
           financialScore: 0, 

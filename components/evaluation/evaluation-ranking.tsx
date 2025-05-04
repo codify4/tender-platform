@@ -65,12 +65,6 @@ export function EvaluationRanking({
             <CardTitle>{tenderTitle}</CardTitle>
             <CardDescription>{submissionCount} submissions ranked by AI evaluation</CardDescription>
           </div>
-          <div className="flex gap-2">
-            <Button variant="outline" size="sm" className="flex items-center gap-1">
-              <Filter className="h-4 w-4" />
-              Filter
-            </Button>
-          </div>
         </div>
       </CardHeader>
       <CardContent>

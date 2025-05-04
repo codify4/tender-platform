@@ -7,11 +7,12 @@ import { Badge } from "@/components/ui/badge"
 import { FileText, CheckCircle, AlertCircle, ArrowLeft, Download, Star } from "lucide-react"
 import Link from "next/link"
 import { mockSubmissions } from "@/lib/submissions"
-import { mockEvaluations } from "@/lib/evaluations"
+import { evaluateSubmission } from "@/actions/gemini"
+import { Submission } from "@/lib/db-schema"
 
 type PageProps = {
   params: Promise<{ id: string }>
-  searchParams: Promise<{ error?: string }>
+  searchParams: Promise<{ error?: string, check?: string }>
 }
 
 export default async function SubmissionDetailsPage({ params, searchParams }: PageProps) {
@@ -38,8 +39,25 @@ export default async function SubmissionDetailsPage({ params, searchParams }: Pa
   const submission = mockSubmissions.find((sub) => sub.id === submissionId)
   if (!submission) redirect("/staff/committee-dashboard/submissions")
 
-  // Fetch evaluation if exists from mock data
-  const evaluation = mockEvaluations.find((evaluation) => evaluation.application_id === submissionId)
+  // Check if evaluation exists in Supabase or try to generate if requested
+  // In a real app, you'd check if the evaluation exists in a database
+  // For now, we'll assume no stored evaluations
+  let evaluation = null
+  const checkEvaluation = resolvedSearchParams.check === "true"
+  
+  if (checkEvaluation) {
+    try {
+          // Cast status to one of the expected values
+    const typedSubmission: Submission = {
+      ...submission,
+      status: submission.status as 'pending' | 'evaluated' | 'recommended' | 'rejected'
+    }
+    evaluation = await evaluateSubmission(typedSubmission)
+    } catch (error) {
+      console.error("Error generating evaluation:", error)
+      // We'll continue without an evaluation
+    }
+  }
 
   // Format date
   const formattedDate = new Date(submission.created_at).toLocaleDateString("en-US", {
@@ -76,7 +94,7 @@ export default async function SubmissionDetailsPage({ params, searchParams }: Pa
         </div>
         <div className="flex gap-2 mt-4 md:mt-0">
           {!evaluation ? (
-            <Button variant="outline" asChild>
+            <Button variant="default" asChild>
               <Link href={`/staff/committee-dashboard/evaluation/${submissionId}`}>
                 <Star className="h-4 w-4 mr-1" />
                 Evaluate Submission
@@ -106,14 +124,12 @@ export default async function SubmissionDetailsPage({ params, searchParams }: Pa
           <CardContent>
             <Badge
               className={
-                submission.status === "pending"
+                !evaluation
                   ? "bg-yellow-50 text-yellow-700 hover:bg-yellow-50"
-                  : submission.status === "evaluated"
-                    ? "bg-blue-50 text-blue-700 hover:bg-blue-50"
-                    : "bg-green-50 text-green-700 hover:bg-green-50"
+                  : "bg-blue-50 text-blue-700 hover:bg-blue-50"
               }
             >
-              {submission.status.charAt(0).toUpperCase() + submission.status.slice(1)}
+              {!evaluation ? "Pending Evaluation" : "Evaluated"}
             </Badge>
           </CardContent>
         </Card>
@@ -183,32 +199,6 @@ export default async function SubmissionDetailsPage({ params, searchParams }: Pa
             ))}
           </div>
         </CardContent>
-        <CardFooter className="border-t pt-6">
-          <div className="w-full flex justify-between items-center">
-            <div className="flex items-center">
-              {!evaluation ? (
-                <AlertCircle className="h-5 w-5 text-yellow-600 mr-2" />
-              ) : (
-                <CheckCircle className="h-5 w-5 text-green-600 mr-2" />
-              )}
-              <span className="text-sm text-muted-foreground">
-                {!evaluation ? "This submission is pending evaluation" : "This submission has been evaluated"}
-              </span>
-            </div>
-            <Button asChild>
-              <Link href={`/staff/committee-dashboard/evaluation/${submissionId}`}>
-                {!evaluation ? (
-                  <>
-                    <Star className="h-4 w-4 mr-1" />
-                    Evaluate Now
-                  </>
-                ) : (
-                  "View Evaluation Results"
-                )}
-              </Link>
-            </Button>
-          </div>
-        </CardFooter>
       </Card>
     </div>
   )

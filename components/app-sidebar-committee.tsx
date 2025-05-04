@@ -34,7 +34,7 @@ const data = {
       icon: FileText,
     },
     {
-      title: "Evaluation",
+      title: "Ranking",
       url: "/staff/committee-dashboard/evaluation",
       icon: Star,
     },

@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation"
 import { createClient } from "@/utils/supabase/server"
 import { getStaffRole } from "@/actions/staff-auth"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Input } from "@/components/ui/input"
@@ -9,7 +9,7 @@ import { Search, Eye } from "lucide-react"
 import Link from "next/link"
 import { SubmissionCard } from "@/components/evaluation/submission-card"
 import { mockSubmissions } from "@/lib/submissions"
-import { mockEvaluations } from "@/lib/evaluations"
+import { EvaluatedApplication } from "@/lib/db-schema"
 
 export default async function CommitteeSubmissionsPage() {
   const supabase = await createClient()
@@ -30,29 +30,56 @@ export default async function CommitteeSubmissionsPage() {
     redirect("/staff/role?message=You do not have access to this page")
   }
 
+  // Fetch evaluations from the database
+  const { data: evaluations, error } = await supabase
+    .from('evaluated_applications')
+    .select('*')
+    .order('score', { ascending: false }) as { data: EvaluatedApplication[] | null, error: any }
+  
+  if (error) {
+    console.error("Error fetching evaluations:", error)
+    // Continue with mock data if there's an error
+  }
+
+  // Create a map of application IDs to evaluations for easy lookup
+  const evaluationMap = new Map<string, EvaluatedApplication>()
+  if (evaluations) {
+    evaluations.forEach((evaluation) => {
+      evaluationMap.set(evaluation.application_id, evaluation)
+    })
+  }
+
   // Transform mock data to match the expected format for the UI
-  const submissions = mockSubmissions.map((submission) => {
+  const submissions = mockSubmissions.map((submission, index) => {
     // Check if this submission has been evaluated
-    const existingEvaluation = mockEvaluations.find(
-      (existingEvaluation) => existingEvaluation.application_id === submission.id,
-    )
+    const evaluation = evaluationMap.get(submission.id)
+    
+    // Convert status to the format expected by SubmissionCard
+    const mappedStatus = evaluation 
+      ? (evaluation.recommendation === 'reject' ? 'evaluated' : 'evaluated')
+      : (submission.status === "pending" ? "pending_review" : (submission.status === "rejected" ? "evaluated" : "evaluated"));
+
+    // Calculate rank (if evaluated)
+    const rank = evaluation ? 
+      (evaluations ? evaluations.findIndex((e: any) => e.application_id === submission.id) + 1 : undefined) : 
+      undefined;
 
     return {
-      id: submission.id,
+      id: parseInt(submission.id),
+      tenderId: parseInt(submission.tender_id),
       vendor: submission.vendor_name,
       tenderTitle: submission.tender_title,
-      submittedAt: new Date(submission.created_at).toLocaleDateString(),
-      status: submission.status, // Use the original status from mock data
-      score: existingEvaluation ? existingEvaluation.score : null,
-      rank: Math.floor(Math.random() * 5) + 1, // Random rank for demo
-      isLocked: false,
+      submissionDate: new Date(submission.created_at).toLocaleDateString(),
+      documents: submission.documents.length,
+      status: mappedStatus as "pending_review" | "under_evaluation" | "evaluated",
+      score: evaluation?.score ?? (submission.score !== null ? submission.score : undefined)
     }
   })
 
   // Group submissions by status for card display
-  const pendingSubmissions = submissions.filter((s) => s.status === "pending")
-  const evaluatedSubmissions = submissions.filter((s) => s.status === "evaluated" || s.status === "recommended")
-  const rejectedSubmissions = submissions.filter((s) => s.status === "rejected")
+  const pendingSubmissions = submissions.filter((s) => s.status === "pending_review")
+  const evaluatedSubmissions = submissions.filter((s) => s.status === "evaluated" && (!s.score || s.score >= 60))
+  const rejectedSubmissions = submissions.filter((s) => s.status === "evaluated" && s.score && s.score < 60)
 
   return (
     <div className="flex w-full flex-col p-8">
@@ -93,7 +120,7 @@ export default async function CommitteeSubmissionsPage() {
         </Card>
       </div>
 
-      <Card>
+      <Card className="mb-6">
         <CardHeader>
           <div className="flex flex-col md:flex-row justify-between md:items-center gap-4">
             <div>
@@ -117,35 +144,35 @@ export default async function CommitteeSubmissionsPage() {
 
             <TabsContent value="all">
               <div className="rounded-md border">
-                <div className="grid grid-cols-6 p-4 font-medium border-b">
+                <div className="grid grid-cols-5 p-4 font-medium border-b">
                   <div>Vendor</div>
                   <div>Tender</div>
                   <div>Submission Date</div>
                   <div>Status</div>
-                  <div>Score</div>
                   <div>Actions</div>
                 </div>
                 {submissions.map((submission) => (
-                  <div key={submission.id} className="grid grid-cols-6 p-4 border-b last:border-0">
+                  <div key={submission.id} className="grid grid-cols-5 p-4 border-b last:border-0">
                     <div className="font-medium">{submission.vendor}</div>
                     <div>{submission.tenderTitle}</div>
-                    <div>{submission.submittedAt}</div>
+                    <div>{submission.submissionDate}</div>
                     <div>
                       <span
                         className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold ${
-                          submission.status === "pending"
+                          submission.status === "pending_review"
                             ? "bg-yellow-50 text-yellow-700"
-                            : submission.status === "evaluated"
+                            : submission.status === "under_evaluation"
                               ? "bg-blue-50 text-blue-700"
-                              : submission.status === "recommended"
-                                ? "bg-green-50 text-green-700"
-                                : "bg-red-50 text-red-700"
+                              : "bg-green-50 text-green-700"
                         }`}
                       >
-                        {submission.status.charAt(0).toUpperCase() + submission.status.slice(1)}
+                        {submission.status === "pending_review" 
+                          ? "Pending" 
+                          : submission.status === "under_evaluation" 
+                            ? "In Progress" 
+                            : "Evaluated"}
                       </span>
                     </div>
-                    <div>{submission.score !== null ? submission.score + "/100" : "-"}</div>
                     <div>
                       <Button variant="ghost" size="sm" asChild>
                         <Link href={`/staff/committee-dashboard/submissions/${submission.id}`}>
@@ -162,7 +189,7 @@ export default async function CommitteeSubmissionsPage() {
             <TabsContent value="pending">
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {pendingSubmissions.length > 0 ? (
-                  pendingSubmissions.map((submission: any) => <SubmissionCard key={submission.id} submission={submission} />)
+                  pendingSubmissions.map((submission) => <SubmissionCard key={submission.id} submission={submission} />)
                 ) : (
                   <div className="col-span-full p-8 text-center text-muted-foreground">
                     No pending submissions found
@@ -174,7 +201,7 @@ export default async function CommitteeSubmissionsPage() {
             <TabsContent value="evaluated">
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {evaluatedSubmissions.length > 0 ? (
-                  evaluatedSubmissions.map((submission: any) => (
+                  evaluatedSubmissions.map((submission) => (
                     <SubmissionCard key={submission.id} submission={submission} />
                   ))
                 ) : (
@@ -188,7 +215,7 @@ export default async function CommitteeSubmissionsPage() {
             <TabsContent value="rejected">
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {rejectedSubmissions.length > 0 ? (
-                  rejectedSubmissions.map((submission: any) => (
+                  rejectedSubmissions.map((submission) => (
                     <SubmissionCard key={submission.id} submission={submission} />
                   ))
                 ) : (
@@ -200,12 +227,6 @@ export default async function CommitteeSubmissionsPage() {
             </TabsContent>
           </Tabs>
         </CardContent>
-        <CardFooter className="flex justify-between border-t pt-6">
-          <div className="text-sm text-muted-foreground">Showing {submissions.length} submissions</div>
-          <Button asChild>
-            <Link href="/staff/committee-dashboard/evaluation">Go to Evaluation Dashboard</Link>
-          </Button>
-        </CardFooter>
       </Card>
     </div>
   )

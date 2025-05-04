@@ -8,7 +8,9 @@ import { ChevronLeft, CheckCircle2, AlertCircle, BarChartHorizontal, FileBarChar
 import Link from "next/link"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Progress } from "@/components/ui/progress"
-import { mockEvaluations } from "@/lib/evaluations"
+import { mockSubmissions } from "@/lib/submissions"
+import { evaluateSubmission } from "@/actions/gemini"
+import { Submission } from "@/lib/db-schema"
 
 interface PageProps {
   params: Promise<{ id: string }>
@@ -33,15 +35,33 @@ export default async function EvaluationResultsPage({ params, searchParams }: Pa
   const role = await getStaffRole()
   if (role !== "committee_officer") redirect("/staff/role?message=No access")
 
-  // Fetch evaluation data from mock data
-  const evaluation = mockEvaluations.find((evaluationItem) => evaluationItem.application_id === submissionId)
+  // Fetch submission data from mock data
+  const submission = mockSubmissions.find((sub) => sub.id === submissionId)
+  if (!submission) redirect("/staff/committee-dashboard/submissions")
 
-  if (!evaluation) redirect(`/staff/committee-dashboard/submissions/${submissionId}`)
+  // Generate evaluation using Gemini AI
+  let evaluation;
+  try {
+    // Cast status to one of the expected values
+    const typedSubmission: Submission = {
+      ...submission,
+      status: submission.status as 'pending' | 'evaluated' | 'recommended' | 'rejected'
+    }
+    evaluation = await evaluateSubmission(typedSubmission)
+    
+    // If no evaluation was returned, redirect back to submission
+    if (!evaluation) {
+      redirect(`/staff/committee-dashboard/submissions/${submissionId}`);
+    }
+  } catch (error) {
+    console.error("Error generating evaluation:", error);
+    redirect(`/staff/committee-dashboard/submissions/${submissionId}?error=evaluation_failed`);
+  }
 
   // Calculate scores
-  const technicalTotal = evaluation.technical_evaluation.total_score
-  const financialScore = evaluation.financial_evaluation.score
-  const overallScore = evaluation.score
+  const technicalTotal = evaluation.technical_evaluation.total_score;
+  const financialScore = evaluation.financial_evaluation.score;
+  const overallScore = evaluation.score;
 
   return (
     <div className="flex w-full flex-col p-8">
@@ -125,7 +145,7 @@ export default async function EvaluationResultsPage({ params, searchParams }: Pa
             <Button className="w-full" asChild>
               <Link href={`/staff/committee-dashboard/submissions/${submissionId}`}>View Submission Details</Link>
             </Button>
-            <Button variant="outline" className="w-full text-white">
+            <Button variant="outline" className="w-full text-black bg-white">
               Download Evaluation Report
             </Button>
           </CardContent>
@@ -260,9 +280,9 @@ export default async function EvaluationResultsPage({ params, searchParams }: Pa
           <CardDescription>Critical items requiring attention</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="flex flex-wrap gap-2">
+          <div className="flex flex-wrap max-w-xl gap-2">
             {evaluation.compliance_issues.map((issue: any, index: any) => (
-              <Badge key={index} variant="destructive" className="px-3 py-1">
+              <Badge key={index} variant="destructive" className="px-3 py-1 text-wrap">
                 {issue}
               </Badge>
             ))}
