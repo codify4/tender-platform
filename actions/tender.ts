@@ -25,7 +25,7 @@ export async function createTender(formData: FormData) {
     
     let status = 'draft'
     if (publishDate <= now && now <= deadlineDate) {
-      status = 'active'
+      status = 'published'
     } else if (now > deadlineDate) {
       status = 'closed'
     }

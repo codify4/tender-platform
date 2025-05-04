@@ -166,42 +166,38 @@ export default function ApplicationsPage() {
   };
 
   return (
-    <div className="container py-8">
+    <div className="container py-8 px-10">
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-3xl font-bold">My Applications</h1>
       </div>
 
-      <Card className="mb-6">
-        <CardContent className="p-6">
-          <div className="flex flex-col sm:flex-row gap-4">
-            <div className="relative flex-1">
-              <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-              <Input
-                type="search"
-                placeholder="Search applications..."
-                className="pl-8"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-              />
-            </div>
-            <Select
-              value={statusFilter}
-              onValueChange={setStatusFilter}
-            >
-              <SelectTrigger className="w-[180px]">
-                <SelectValue placeholder="Filter by status" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Statuses</SelectItem>
-                <SelectItem value="pending">Pending</SelectItem>
-                <SelectItem value="under_review">Under Review</SelectItem>
-                <SelectItem value="approved">Approved</SelectItem>
-                <SelectItem value="rejected">Rejected</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-        </CardContent>
-      </Card>
+      <div className="flex flex-col sm:flex-row gap-4 mb-10">
+        <div className="relative flex-1">
+          <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+          <Input
+            type="search"
+            placeholder="Search applications..."
+            className="pl-8"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
+        </div>
+        <Select
+          value={statusFilter}
+          onValueChange={setStatusFilter}
+        >
+          <SelectTrigger className="w-[180px]">
+            <SelectValue placeholder="Filter by status" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All Statuses</SelectItem>
+            <SelectItem value="pending">Pending</SelectItem>
+            <SelectItem value="under_review">Under Review</SelectItem>
+            <SelectItem value="approved">Approved</SelectItem>
+            <SelectItem value="rejected">Rejected</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
 
       <Card>
         <CardHeader>
@@ -238,18 +234,18 @@ export default function ApplicationsPage() {
                           variant="outline"
                           size="sm"
                           onClick={() => handleViewDetails(application)}
+                          className="bg-white"
                         >
                           <Eye className="h-4 w-4 mr-1" />
-                          Details
                         </Button>
                         <Button
                           variant="outline"
                           size="sm"
                           asChild
+                          className="bg-white"
                         >
                           <Link href={`/vendor/tenders/${application.tenderId}`}>
                             <FileText className="h-4 w-4 mr-1" />
-                            Tender
                           </Link>
                         </Button>
                       </div>
@@ -277,7 +273,7 @@ export default function ApplicationsPage() {
 
       {/* Application Details Dialog */}
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent className="sm:max-w-[600px]">
+        <DialogContent className="sm:max-w-[600px] bg-white">
           <DialogHeader>
             <DialogTitle>Application Details</DialogTitle>
             <DialogDescription>

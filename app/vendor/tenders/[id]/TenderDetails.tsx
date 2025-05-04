@@ -146,13 +146,6 @@ export default function TenderDetails({
           <h1 className="text-3xl font-bold">{tender.title}</h1>
           <p className="text-muted-foreground">Reference: {tender.reference}</p>
         </div>
-        <div className="flex gap-2">
-          <Button variant="outline" size="sm" asChild>
-            <a href="/vendor/tenders">
-              Back to Tenders
-            </a>
-          </Button>
-        </div>
       </div>
 
       {showSuccess && (
@@ -300,119 +293,6 @@ export default function TenderDetails({
                     </div>
                   </div>
                 </CardContent>
-                <CardFooter>
-                  <Dialog>
-                    <DialogTrigger asChild>
-                      <Button className="w-full">
-                        <Upload className="h-4 w-4 mr-2" />
-                        Apply for Tender
-                      </Button>
-                    </DialogTrigger>
-                    <DialogContent className="sm:max-w-[500px]">
-                      <DialogHeader>
-                        <DialogTitle>Apply for Tender</DialogTitle>
-                        <DialogDescription>
-                          Submit your application for this tender by uploading the required documents.
-                        </DialogDescription>
-                      </DialogHeader>
-                      <form onSubmit={handleSubmit} ref={formRef}>
-                        <div className="grid gap-4 py-4">
-                          <div className="grid gap-2">
-                            <Label htmlFor="coverMessage">Cover Message</Label>
-                            <Textarea 
-                              id="coverMessage" 
-                              name="coverMessage"
-                              placeholder="Brief description of your application..." 
-                              rows={4}
-                              required
-                            />
-                          </div>
-                          <div className="grid gap-2">
-                            <Label>Upload Application Documents</Label>
-                            <div className="border-2 border-dashed rounded-md p-6 text-center">
-                              <Input
-                                id="applicationFiles"
-                                name="applicationFiles"
-                                type="file"
-                                multiple
-                                className="hidden"
-                                onChange={handleFileChange}
-                                ref={fileInputRef}
-                              />
-                              <Label 
-                                htmlFor="applicationFiles" 
-                                className="flex flex-col items-center cursor-pointer"
-                              >
-                                <Upload className="h-6 w-6 mb-2 text-muted-foreground" />
-                                <span className="text-sm font-medium mb-1">
-                                  Click to upload files
-                                </span>
-                                <span className="text-xs text-muted-foreground">
-                                  Technical proposal, financial proposal, company documents, etc.
-                                </span>
-                                <span className="text-xs text-muted-foreground mt-2">
-                                  Upload all your files at once (max 50MB total)
-                                </span>
-                              </Label>
-                            </div>
-                            
-                            {files.length > 0 && (
-                              <div className="mt-4">
-                                <h4 className="text-sm font-medium mb-2">Selected Files ({files.length})</h4>
-                                <div className="max-h-60 overflow-y-auto space-y-2">
-                                  {files.map((file, i) => (
-                                    <div key={i} className="flex items-center justify-between p-2 bg-muted/50 rounded text-sm">
-                                      <div className="flex items-center overflow-hidden">
-                                        <FileText className="h-4 w-4 mr-2 flex-shrink-0 text-muted-foreground" />
-                                        <span className="truncate">{file.name}</span>
-                                      </div>
-                                      <div className="flex items-center gap-2">
-                                        <span className="text-xs text-muted-foreground whitespace-nowrap">
-                                          {(file.size / 1024).toFixed(0)} KB
-                                        </span>
-                                        <Button 
-                                          type="button" 
-                                          variant="ghost" 
-                                          size="icon" 
-                                          className="h-6 w-6 rounded-full"
-                                          onClick={() => handleRemoveFile(i)}
-                                        >
-                                          <X className="h-3 w-3" />
-                                          <span className="sr-only">Remove</span>
-                                        </Button>
-                                      </div>
-                                    </div>
-                                  ))}
-                                </div>
-                                <Button
-                                  type="button"
-                                  variant="outline"
-                                  size="sm"
-                                  className="mt-2 w-full"
-                                  onClick={() => fileInputRef.current?.click()}
-                                >
-                                  <Upload className="h-4 w-4 mr-2" />
-                                  Add More Files
-                                </Button>
-                              </div>
-                            )}
-                          </div>
-                        </div>
-                        <DialogFooter>
-                          <Button type="submit" disabled={isSubmitting || files.length === 0}>
-                            {isSubmitting ? (
-                              <>
-                                <div className="spinner mr-2" /> Submitting...
-                              </>
-                            ) : (
-                              "Submit Application"
-                            )}
-                          </Button>
-                        </DialogFooter>
-                      </form>
-                    </DialogContent>
-                  </Dialog>
-                </CardFooter>
               </Card>
               
               <Card className="mt-6">
@@ -480,7 +360,7 @@ export default function TenderDetails({
                           type="button"
                           variant="outline"
                           size="lg"
-                          className="mt-6"
+                          className="mt-6 text-white"
                           onClick={() => fileInputRef.current?.click()}
                         >
                           <Upload className="h-4 w-4 mr-2" />
@@ -541,7 +421,7 @@ export default function TenderDetails({
                 </div>
                 
                 <div className="flex justify-end gap-3">
-                  <Button type="button" variant="outline" asChild>
+                  <Button type="button" variant="outline" asChild className="bg-white">
                     <a href="/vendor/tenders">Cancel</a>
                   </Button>
                   <Button type="submit" disabled={isSubmitting || files.length === 0}>

@@ -166,11 +166,6 @@ export default async function EvaluationPage() {
     <div className="flex w-full flex-col p-8">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-3xl font-bold">Tender Evaluation Results</h1>
-        <Button variant="outline" asChild>
-          <Link href="/staff/procurement-dashboard/tenders">
-            Back to Tenders
-          </Link>
-        </Button>
       </div>
       
       <Tabs defaultValue="completed" className="space-y-6">
@@ -248,7 +243,7 @@ export default async function EvaluationPage() {
                             <div className="text-xs text-muted-foreground">Financial</div>
                           </div>
                           <div className="col-span-1 text-right">
-                            <Button variant="outline" size="sm" asChild>
+                            <Button variant="outline" size="sm" asChild className="bg-white">
                               <Link href={`/staff/procurement-dashboard/evaluation/${submission.id}`}>
                                 View Details
                               </Link>

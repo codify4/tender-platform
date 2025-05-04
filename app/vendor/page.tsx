@@ -70,7 +70,7 @@ export default function VendorPage() {
                   </div>
                 </div>
                 <div className="flex space-x-2">
-                  <Button asChild variant="outline" size="sm">
+                  <Button asChild variant="outline" size="sm"className="bg-white">
                     <Link href={`/vendor/tenders/${i}`}>
                       <FileBox className="h-4 w-4 mr-2" />
                       View Details
@@ -81,14 +81,6 @@ export default function VendorPage() {
             </CardContent>
           </Card>
         ))}
-      </div>
-      
-      <div className="mt-8 flex justify-center">
-        <Button asChild variant="outline">
-          <Link href="/vendor/tenders">
-            View All Tenders
-          </Link>
-        </Button>
       </div>
     </div>
   );
